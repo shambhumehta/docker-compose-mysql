@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  common-mysql:
+    image: mysql:8.0.25
+    container_name: mysql-development-local
+    environment:
+      #  - MYSQL_USER=root
+      #  - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      #- MYSQL_ROOT_PASSWORD: "root"
+      #- MYSQL_USER: "user"
+      #- MYSQL_PASSWORD: "password"
+      #Remove MYSQL_USER="root" and use one of the following to control the root user password:
+      - MYSQL_ROOT_PASSWORD=password
+    #- JDBC_PARAMS="useSSL=false&allowPublicKeyRetrieval=true"
+    #- MYSQL_ALLOW_EMPTY_PASSWORD
+    #- MYSQL_RANDOM_ROOT_PASSWORD
+    ports:
+      - 7013:3306
+    command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp --default_storage_engine=INNODB --sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+    networks:
+      - development-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  development-network:
+    driver: bridge
